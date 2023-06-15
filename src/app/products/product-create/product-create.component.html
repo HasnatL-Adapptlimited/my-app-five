@@ -9,8 +9,11 @@
   <div>
     <label for="price">Price</label>
     <input id="price" formControlName="price" required />
-    <span *ngIf="price.touched && price.invalid">
-      The price is not valid
+    <span *ngIf="price.touched && price.hasError('required')">
+      The price is required
+    </span>
+    <span *ngIf="price.touched && price.hasError('min')">
+      The price should be greater than 1!
     </span>
   </div>
   <div>
