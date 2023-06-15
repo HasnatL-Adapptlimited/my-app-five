@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { Product } from '../product';
 import { ProductsService } from '../products.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -8,7 +8,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './product-create.component.html',
   styleUrls: ['./product-create.component.css']
 })
-export class ProductCreateComponent {
+export class ProductCreateComponent implements OnInit {
+
+  showPriceRangeHint = false;
+  @Output() added = new EventEmitter<Product>();
 
   productForm = new FormGroup({
     name: new FormControl('', {
@@ -24,9 +27,17 @@ export class ProductCreateComponent {
   get name() { return this.productForm.controls.name }
   get price() { return this.productForm.controls.price }
 
-  @Output() added = new EventEmitter<Product>();
+
 
   constructor(private productsService: ProductsService) {}
+
+  ngOnInit(): void {
+    this.price.valueChanges.subscribe(price => {
+      if (price) {
+        this.showPriceRangeHint = price > 1 && price < 10000;
+      }
+    });
+  }
 
   createProduct() {
     this.productsService.addProduct(this.name.value, Number(this.price.value)).subscribe(product => {
